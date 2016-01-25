@@ -72,10 +72,10 @@ artifacts {
 }
 
 bintray {
-    user = BINTRAY_USER
-    key = BINTRAY_APIKEY
-
     configurations = ['archives']
+
+    publish = true
+
     pkg {
         repo = BINTRAY_REPO
         name = POM_NAME
@@ -84,12 +84,17 @@ bintray {
         websiteUrl = POM_URL
         vcsUrl = POM_SCM_URL
         licenses = rootProject.ext.LICENSES
-        publish = true
-        version {
-            gpg {
-                sign = true
-                passphrase = BINTRAY_PASSWORD
-            }
-        }
     }
+}
+
+if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
+    bintray.user = project.bintrayUser
+    bintray.key = project.bintrayKey
+}
+
+if (project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
+    def sync = bintray.pkg.version.mavenCentralSync
+    sync.sync = true
+    sync.user = project.sonatypeUsername
+    sync.password = project.sonatypePassword
 }
